@@ -1,0 +1,20 @@
+https://www.freelance.de/search/project.php?__search_sort_by=&__search_project_age=0&__search_profile_availability=0&__search_profile_update=0&__search_profile_apply_watchlist=0&__search_project_start_date=&__search_profile_ac=&__search_additional_filter=&__search=search&search_extended=0&__search_freetext=java&__search_city=&seal=8f5a4f09298b802f293757edaa7a40388de01c3a&__search_city_location_id=&__search_city_country=&__search_city_country_extended=&search_id=4a86cc21977b2a1c4587dd8c66d85cd4&search_simple=suchen&__search_country=&__search_hour_rate_modifier=&__search_experience_modifier=&__search_additional_filter=&__search_project_age_remote=0&__search_project_start_date_remote=
+https://app.scrapingbee.com/api/v1/?api_key=7JWA4APXUMFSUCI1Q0O1SETH6OA6AJLWHJXK3RJ7RWWJB1XA08DW1JGCPFFBVTKVWKEJDFZPOTBMF3X3&url=https%3A%2F%2Fwww.freelance.de%2Fsearch%2Fproject.php%3F__search_sort_by%3D%26__search_project_age%3D0%26__search_profile_availability%3D0%26__search_profile_update%3D0%26__search_profile_apply_watchlist%3D0%26__search_project_start_date%3D%26__search_profile_ac%3D%26__search_additional_filter%3D%26__search%3Dsearch%26search_extended%3D0%26__search_freetext%3Djava%26__search_city%3D%26seal%3D8f5a4f09298b802f293757edaa7a40388de01c3a%26__search_city_location_id%3D%26__search_city_country%3D%26__search_city_country_extended%3D%26search_id%3D4a86cc21977b2a1c4587dd8c66d85cd4%26search_simple%3Dsuchen%26__search_country%3D%26__search_hour_rate_modifier%3D%26__search_experience_modifier%3D%26__search_additional_filter%3D%26__search_project_age_remote%3D0%26__search_project_start_date_remote%3D&render_js=false&block_resources=false&extract_rules=%7B%22all_post%22%20%3A%20%7B%20%20%20%20%20%20%20%20%22selector%22%3A%20%22.list-item-content%22%2C%20%20%20%20%20%20%20%20%22type%22%3A%20%22list%22%2C%20%20%20%20%20%20%20%20%22output%22%3A%20%7B%20%20%20%20%20%20%20%20%20%20%22title%22%3A%22h3%22%2C%20%20%20%20%20%20%20%20%20%20%22link%22%3A%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22selector%22%3A%20%22a%22%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22output%22%3A%20%22%40href%22%20%20%20%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%20%20%7D%2C%20%20%20%20%7D%2C%7D
+
+
+###
+# extract Ruls
+###
+{
+	"all_post" : {
+        "selector": ".list-item-content",
+        "type": "list",
+        "output": {
+          "title":"h3",
+          "link": {
+               "selector": "a",
+               "output": "@href"
+           }
+        },
+    },
+}

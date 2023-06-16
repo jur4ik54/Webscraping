@@ -1,0 +1,25 @@
+https://www.gulp.de/gulp2/g/projekte?order=DATE_DESC&query=java
+
+https://app.scrapingbee.com/api/v1/?api_key=7JWA4APXUMFSUCI1Q0O1SETH6OA6AJLWHJXK3RJ7RWWJB1XA08DW1JGCPFFBVTKVWKEJDFZPOTBMF3X3&url=https%3A%2F%2Fwww.gulp.de%2Fgulp2%2Fg%2Fprojekte%3Forder%3DDATE_DESC%26query%3Djava&block_resources=false&extract_rules=%7B%22all_posts%22%20%3A%20%7B%20%20%20%20%20%20%20%20%22selector%22%3A%20%22app-project-view%22%2C%20%20%20%20%20%20%20%20%22type%22%3A%20%22list%22%2C%20%20%20%20%20%20%20%20%22output%22%3A%20%7B%20%20%20%20%20%20%20%20%20%20%22title%22%3A%22h1%22%2C%20%20%20%20%20%20%20%20%20%20%22link%22%3A%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22selector%22%3A%20%22a%22%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22output%22%3A%20%22%40href%22%20%20%20%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%20%20%7D%2C%20%20%20%20%7D%2C%7D
+
+####
+# Javascript redering on
+####
+
+
+###
+# Extract rules
+###
+{
+	"all_post" : {
+        "selector": "app-project-view",
+        "type": "list",
+        "output": {
+          "title":"h1",
+          "link": {
+               "selector": "a",
+               "output": "@href"
+           }
+        },
+    },
+}
