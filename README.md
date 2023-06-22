@@ -1,16 +1,17 @@
 Scraping web App
 
 PORTALNAME:
-freelancermap
-computerfutures
-etengo
-solcom
-gulp
+<br>freelancermap
+<br>computerfutures
+<br>etengo
+<br>solcom
+<br>gulp
+<br>all
+<br>API:
+<br>your-domain.de/fetch/Portalname
 
-API:
-your-domain.de/fetch/Portalname
-
-How to set up:
-change java/main/resources/applicationEXAMPLE.properties to  application.properties
-mvn clean install 
-mvn spring-boot:run
+<br>How to set up:
+<br>change java/main/resources/applicationEXAMPLE.properties to  application.properties
+<br>mvn clean install 
+<br>mvn spring-boot:run
+<br><br> install driver https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
