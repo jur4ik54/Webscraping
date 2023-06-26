@@ -14,4 +14,5 @@ PORTALNAME:
 <br>change java/main/resources/applicationEXAMPLE.properties to  application.properties
 <br>mvn clean install 
 <br>mvn spring-boot:run
+<br>mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8085
 <br><br> install driver https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
