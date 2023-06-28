@@ -26,7 +26,6 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/fetch")
 public class Controller {
@@ -49,6 +48,14 @@ public class Controller {
         System.out.println("All pages succesfully fetched seconds: "+ duration);
     }
 
+    @RequestMapping("/allTitle")
+    public void allTitle() {
+        freelancermap();
+        computerfutures_selenium();
+        etengo_selenium();
+        solcom_selenium();
+        gulp_selenium();
+    }
     @RequestMapping("/freelancermap")
     public void freelancermap() {
         final String FREELANCERCAMP_URL = "https://www.freelancermap.de/feeds/projekte/de-deutschland.xml";
