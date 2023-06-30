@@ -9,6 +9,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.keycon.spring.scraping.repository.JobRepository;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +36,22 @@ public class Controller {
     @Autowired
     JobRepository jobRepository;
     Logger logger = LoggerFactory.getLogger(Controller.class);
+
+    @RequestMapping("html")
+    public void html(){
+        WebDriver driver = new ChromeDriver(getOptions(true));
+        driver.get("https://www.gulp.de/gulp2/g/projekte/agentur/C00718663");
+        System.out.println(driver.getPageSource());
+        try {
+            FileWriter myWriter = new FileWriter("filename.html");
+            myWriter.write(driver.getPageSource());
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
     @RequestMapping("/all")
     public void all() {
@@ -97,10 +117,10 @@ public class Controller {
 
             driver.findElement(By.id("onetrust-accept-btn-handler")).click();
             WebElement jobs = driver.findElement(By.id("jobsPages"));
-            List<WebElement> itemList = jobs.findElements(By.className("pagination__item"));
+            List<WebElement> itemList = jobs.findElements(By.className("pagination__item")); //including prev,next
 
-            int lastPage = Integer.parseInt(itemList.get(itemList.size() - 2).getText());
-            System.out.println(lastPage);
+            int lastPage = itemList.size()-2;
+            logger.info("Pages in total: "+lastPage);
 
             for (int i = 1; i <= lastPage; i++) {
                 jobs.findElement(By.className("next")).click();
