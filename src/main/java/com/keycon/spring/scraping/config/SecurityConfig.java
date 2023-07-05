@@ -1,4 +1,4 @@
-package com.keycon.spring.scraping;
+package com.keycon.spring.scraping.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +9,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-ui/**"));
+        return (web) -> web.ignoring().requestMatchers(new AntPathRequestMatcher("welcome"));
     }
 }
