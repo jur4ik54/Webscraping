@@ -1,85 +1,65 @@
-package com.keycon.spring.scraping.controller;
+package com.keycon.spring.scraping.service;
 
 import com.keycon.spring.scraping.model.JobEntity;
-import com.keycon.spring.scraping.model.xml.Item;
-import com.keycon.spring.scraping.utils.Portal;
-import com.keycon.spring.scraping.model.xml.Rss;
 import com.keycon.spring.scraping.model.json.Job;
+import com.keycon.spring.scraping.model.xml.Item;
+import com.keycon.spring.scraping.model.xml.Rss;
+import com.keycon.spring.scraping.repository.JobRepository;
+import com.keycon.spring.scraping.utils.Portal;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-
-import com.keycon.spring.scraping.repository.JobRepository;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@RestController
-@RequestMapping("/fetch")
-public class Controller {
+@Service
+public class PortalService {
+
     @Autowired
     JobRepository jobRepository;
-    Logger logger = LoggerFactory.getLogger(Controller.class);
+    Logger logger = LoggerFactory.getLogger(PortalService.class);
 
-    @RequestMapping("html")
     public void html(){
-        WebDriver driver = new ChromeDriver(getOptions(true));
-        driver.get("https://www.gulp.de/gulp2/g/projekte/agentur/C00718663");
-        System.out.println(driver.getPageSource());
-        try {
-            FileWriter myWriter = new FileWriter("filename.html");
-            myWriter.write(driver.getPageSource());
-            myWriter.close();
-            System.out.println("Successfully wrote to the file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        //fetch each description as html
     }
-
-    @RequestMapping("/all")
     public void all() {
         final long startTime = System.nanoTime();
         freelancermap();
-        computerfutures_selenium();
+        computerfutures();
         visitLinkReadDescriptionForComputerfutures();
-        etengo_selenium();
+        etengo();
         visitLinkReadDescriptionForEtengo();
-        solcom_selenium();
-        gulp_selenium();
+        solcom();
+        gulp();
         visitLinkReadDescriptionForGulp();
         final long duration = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
         System.out.println("All pages succesfully fetched seconds: "+ duration);
     }
-
-    @RequestMapping("/allTitle")
     public void allTitle() {
         freelancermap();
-        computerfutures_selenium();
-        etengo_selenium();
-        solcom_selenium();
-        gulp_selenium();
+        computerfutures();
+        etengo();
+        solcom();
+        gulp();
+        agex();
+        logger.info("done");
     }
-    @RequestMapping("/freelancermap")
     public void freelancermap() {
         final String FREELANCERCAMP_URL = "https://www.freelancermap.de/feeds/projekte/de-deutschland.xml";
-            logger.info("start freelancermap");
+        logger.info("start freelancermap");
         try {
             Content content = Request.Get(FREELANCERCAMP_URL).execute().returnContent();
             JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
@@ -95,7 +75,7 @@ public class Controller {
                     db_jobEntity.setTitle(job.getTitle());
                     db_jobEntity.setLink(job.getLink());
                     db_jobEntity.setDescription(job.getJob_description());
-                    db_jobEntity.setPortalId(Portal.FRELANCERMAP.id);
+                    db_jobEntity.setPortalId(Portal.FRELANCERMAP.name());
 
                     jobRepository.save(db_jobEntity);
                 }
@@ -105,9 +85,7 @@ public class Controller {
         }
         logger.info("End freelancermap");
     }
-
-    @RequestMapping("/computerfutures")
-    public void computerfutures_selenium() {
+    public void computerfutures() {
 
         WebDriver driver = new ChromeDriver(getOptions(true));
         logger.info("start computerfutures");
@@ -141,7 +119,7 @@ public class Controller {
                         jobEntity.setTitle(title);
                         jobEntity.setLink(link);
                         jobEntity.setDescription("");
-                        jobEntity.setPortalId(Portal.CUMPUTERFUTURES.id);
+                        jobEntity.setPortalId(Portal.CUMPUTERFUTURES.name());
                         jobRepository.save(jobEntity);
                     }
 
@@ -161,9 +139,7 @@ public class Controller {
 
 
     }
-
-    @RequestMapping("/etengo")
-    public void etengo_selenium() {
+    public void etengo() {
 
         WebDriver driver = new ChromeDriver(getOptions(true));
         logger.info("start etengo");
@@ -191,7 +167,7 @@ public class Controller {
                     job.setTitle(title);
                     job.setLink(link);
                     job.setDescription("");
-                    job.setPortalId(Portal.ETENGO.id);
+                    job.setPortalId(Portal.ETENGO.name());
                     jobRepository.save(job);
                 }
             });
@@ -204,9 +180,7 @@ public class Controller {
         logger.info("end etengo");
 
     }
-
-    @RequestMapping("/solcom")
-    public void solcom_selenium() {
+    public void solcom() {
 
         WebDriver driver = new ChromeDriver(getOptions(true));
         logger.info("start solcom");
@@ -238,9 +212,7 @@ public class Controller {
         }
         logger.info("end solcom");
     }
-
-    @RequestMapping("/gulp")
-    public void gulp_selenium() {
+    public void gulp() {
         String weblink = "https://www.gulp.de/gulp2/g/projekte?order=DATE_DESC&region=D0&region=D1&region=D2&region=D3&region=D4&region=D5&region=D6&region=D7&region=D8&region=D9&page=8";
         WebDriver driver = new ChromeDriver(getOptions(true));
         logger.info("start gulp");
@@ -265,7 +237,7 @@ public class Controller {
                         JobEntity dbJobEntity = new JobEntity();
                         dbJobEntity.setTitle(title);
                         dbJobEntity.setLink(link);
-                        dbJobEntity.setPortalId(Portal.GULP.id);
+                        dbJobEntity.setPortalId(Portal.GULP.name());
                         jobRepository.save(dbJobEntity);
                     }
                     System.out.println(title + " - " + link);
@@ -278,6 +250,42 @@ public class Controller {
             driver.quit();
         }
         logger.info("end gulp");
+    }
+    public void agex(){
+        String weblink = "https://agex-it.de/jobs-projekte/#";
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start agex");
+        try {
+            driver.get(weblink);
+            Thread.sleep(2000);
+            driver.findElement(By.className("cookie-box")).findElement(By.className("_brlbs-btn-accept-all")).click();
+            Thread.sleep(2000);
+
+            String link="";
+            String title="";
+            List<WebElement> webElements = driver.findElements(By.className("list-item"));
+
+            for(WebElement e:webElements){
+                if(e.getAttribute("data-specialty").equals("Freiberuflich")){
+                    title = e.findElement(By.className("ax-search__results")).findElements(By.tagName("a")).get(1).getText().split("\n")[0];
+                    link = e.findElement(By.tagName("a")).getAttribute("href");
+                    if (jobRepository.findByLink(link).size() == 0) {
+                        JobEntity dbJobEntity = new JobEntity();
+                        dbJobEntity.setTitle(title);
+                        dbJobEntity.setLink(link);
+                        dbJobEntity.setPortalId(Portal.AGEX.name());
+                        jobRepository.save(dbJobEntity);
+                    }
+                    System.out.println(title+" - "+link);
+                }
+            }
+
+        }catch (Exception e){
+        e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("end agex");
+        }
     }
     private void solcom_readAndSaveElements(List<WebElement> elements) {
         elements.forEach(e -> {
@@ -294,17 +302,15 @@ public class Controller {
                 dbJobEntity.setDescription(desc);
                 dbJobEntity.setStartdate(startdate);
                 dbJobEntity.setLocation(location);
-                dbJobEntity.setPortalId(Portal.SOLCOM.id);
+                dbJobEntity.setPortalId(Portal.SOLCOM.name());
                 jobRepository.save(dbJobEntity);
                 System.out.println(title + " - " + link + " - " + desc + " - " + startdate + " - " + location);
             }
         });
     }
-
-    @RequestMapping("/desc/computerfutures")
     public void visitLinkReadDescriptionForComputerfutures() {
         logger.info("start desc computerfutures");
-        List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.CUMPUTERFUTURES.id);
+        List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.CUMPUTERFUTURES.name());
         jobsByPortalId.forEach(j -> {
             JobEntity up_jobEntity = jobRepository.findOneByLink(j.getLink());
 
@@ -334,13 +340,11 @@ public class Controller {
 
         logger.info("end desc computerfutures");
     }
-
-    @RequestMapping("/desc/etengo")
     public void visitLinkReadDescriptionForEtengo() {
         logger.info("start desc etengo");
         WebDriver descDriver = new ChromeDriver(getOptions(true));
         try {
-            List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.ETENGO.id);
+            List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.ETENGO.name());
             jobsByPortalId.forEach(j -> {
 
                 if (j.getDescription() == null || "".equals(j.getDescription())) {
@@ -374,13 +378,11 @@ public class Controller {
 
         logger.info("end desc etengo");
     }
-
-    @RequestMapping("/desc/gulp")
     public void visitLinkReadDescriptionForGulp() {
         logger.info("start desc gulp");
         WebDriver descDriver = new ChromeDriver(getOptions(true));
         try {
-            List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.GULP.id);
+            List<JobEntity> jobsByPortalId = jobRepository.findAllByPortalId(Portal.GULP.name());
             for (JobEntity j : jobsByPortalId) {
                 try {
                     if (j.getDescription() == null || "".equals(j.getDescription())) {
@@ -414,7 +416,6 @@ public class Controller {
         }
         logger.info("end desc gulp");
     }
-
     private Job convertItemToJob(Item i) {
         Job job = new Job();
         job.setTitle(i.title);
@@ -427,10 +428,8 @@ public class Controller {
         job.setUpdated(i.guid);
         return job;
     }
-
     private ChromeOptions getOptions(boolean headless) {
         ChromeOptions options = new ChromeOptions();
         return headless ? options.addArguments("--headless=new") : options;
     }
 }
-
