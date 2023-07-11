@@ -10,10 +10,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
@@ -55,7 +52,224 @@ public class PortalService {
         solcom();
         gulp();
         agex();
+        avantguardExperts();
+        bosshardpartner();
+        projektBroker();
+        comSoftware();
+        cegeka();
+        darwinrecruitment();
         logger.info("done");
+    }
+
+    public void avantguardExperts() {
+        final String AVANTGUARD_URL = "https://www.avantgarde-experts.de/de/jobangebote/?jobCategory=16,23&jobEmploymentType=30&remote=98";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start avantguard");
+        try {
+            driver.get(AVANTGUARD_URL);
+            Thread.sleep(2000);
+
+            driver.findElement(By.id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll")).click();
+            WebElement jobs = driver.findElement(By.className("job-items"));
+            List<WebElement> itemList = driver.findElements(By.className("job-items__item-wrapper"));
+            for(WebElement item:itemList){
+                String link  = item.findElement(By.tagName("a")).getAttribute("href");
+                String title = item.findElement(By.tagName("a")).getAttribute("title");
+
+                if (jobRepository.findByLink(link).size() == 0) {
+                    JobEntity jobEntity = new JobEntity();
+                    jobEntity.setTitle(title);
+                    jobEntity.setLink(link);
+                    jobEntity.setPortalId(Portal.AVANTGUARD_EXPERTS.name());
+                    jobRepository.save(jobEntity);
+                }
+                System.out.println(title+" - "+link);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("avantguard close");
+        }
+    }
+
+    public void bosshardpartner(){
+        final String URL="https://www.bosshardpartner.ch/de/jobs.html";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start");
+        try {
+            driver.get(URL);
+            Thread.sleep(2000);
+
+            List<WebElement> itemList = driver.findElements(By.className("joblist-entry-container"));
+            for(WebElement item:itemList){
+                String link  = item.findElement(By.tagName("a")).getAttribute("href");
+                String title = item.findElement(By.tagName("h2")).getText();
+
+                if (jobRepository.findByLink(link).size() == 0) {
+                    JobEntity jobEntity = new JobEntity();
+                    jobEntity.setTitle(title);
+                    jobEntity.setLink(link);
+                    jobEntity.setPortalId(Portal.BOSSHARDPARTNER.name());
+                    jobRepository.save(jobEntity);
+                }
+                System.out.println(title+" - "+link);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("close");
+        }
+
+    }
+    public void projektBroker(){
+        final String URL="https://jobboard.online/projektbroker30/";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start");
+        try {
+            driver.get(URL);
+            Thread.sleep(2000);
+
+            List<WebElement> itemList = driver.findElements(By.cssSelector("div.card.d-show"));
+            for(WebElement item:itemList){
+                String link = URL+item.getAttribute("data-url");
+                String title  = item.findElement(By.className("card-title")).getText();
+                String desc = item.findElement(By.className("jobdescription")).findElement(By.tagName("span")).getText();
+
+                if (jobRepository.findByLink(link).size() == 0) {
+                    JobEntity jobEntity = new JobEntity();
+                    jobEntity.setTitle(title);
+                    jobEntity.setLink(link);
+                    jobEntity.setDescription(desc);
+                    jobEntity.setPortalId(Portal.PROJEKTBROKER.name());
+                    jobRepository.save(jobEntity);
+                }
+                System.out.println(title+" - "+link + " - "+desc);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("end");
+        }
+
+    }
+    public void cegeka(){
+        final String URL="https://jobs.cegeka.de/vacancy/";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start");
+        try {
+            driver.get(URL);
+            Thread.sleep(2000);
+
+            List<WebElement> itemList = driver.findElements(By.cssSelector("div.list-item"));
+            for(WebElement item:itemList){
+                String link  = item.findElement(By.tagName("h2")).findElement(By.tagName("a")).getAttribute("href");
+                String title = item.findElement(By.tagName("h2")).findElement(By.tagName("a")).getText();
+
+                if (jobRepository.findByLink(link).size() == 0) {
+                    JobEntity jobEntity = new JobEntity();
+                    jobEntity.setTitle(title);
+                    jobEntity.setLink(link);
+                    jobEntity.setPortalId(Portal.CEGEKA.name());
+                    jobRepository.save(jobEntity);
+                }
+                System.out.println(title+" - "+link);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("end");
+        }
+
+    }
+    public void comSoftware(){
+        final String URL="https://jobs.com-software.de/de";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start");
+        try {
+            driver.get(URL);
+            Thread.sleep(2000);
+
+            List<WebElement> itemList = driver.findElements(By.cssSelector("div.col-xs-12.col-sm-12-col-md-12.col-lg-12"));
+            for(WebElement item:itemList){
+                String link  = item.findElement(By.className("portlet-title")).findElement(By.tagName("a")).getAttribute("href");
+                String title = item.findElement(By.className("portlet-title")).findElement(By.tagName("a")).getAttribute("title");
+
+                if (jobRepository.findByLink(link).size() == 0) {
+                    JobEntity jobEntity = new JobEntity();
+                    jobEntity.setTitle(title);
+                    jobEntity.setLink(link);
+                    jobEntity.setPortalId(Portal.COMSOFTWARE.name());
+                    jobRepository.save(jobEntity);
+                }
+                System.out.println(title+" - "+link);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("end");
+        }
+
+    }
+
+    public void darwinrecruitment(){
+        final String URL="https://www.darwinrecruitment.de/search-jobs/?_remote_selection=fully-remote";
+
+        WebDriver driver = new ChromeDriver(getOptions(false));
+        logger.info("start");
+        try {
+            driver.get(URL);
+            Thread.sleep(2000);
+
+            Alert alert = driver.switchTo().alert();
+            alert.accept();
+            Thread.sleep(2000);
+            Alert salert = driver.switchTo().alert();
+            salert.accept();
+
+            String page = driver.findElement(By.cssSelector("a.facetwp-page.last")).getAttribute("data-page");
+            int pages = Integer.parseInt(page);
+            System.out.println("page in total"+ pages);
+
+            for(int i=1;i<=pages; i++) {
+                List<WebElement> itemList = driver.findElements(By.cssSelector("ul.job_listings a"));
+                for (WebElement item : itemList) {
+                    String link = item.getAttribute("href");
+                    String title = item.findElement(By.className("darwin_job_search_page_job_title")).getText();
+                    System.out.println(title + " - " + link);
+                    if (jobRepository.findByLink(link).size() == 0) {
+                        JobEntity jobEntity = new JobEntity();
+                        jobEntity.setTitle(title);
+                        jobEntity.setLink(link);
+                        jobEntity.setPortalId(Portal.DARWINRECRUITMENT.name());
+                        jobRepository.save(jobEntity);
+                    }
+                }
+                logger.info("this was page "+i + " from "+ page);
+
+                if(i<pages){
+                    WebElement element=driver.findElement(By.cssSelector("a.facetwp-page.next"));
+                    JavascriptExecutor executor = (JavascriptExecutor)driver;
+                    executor.executeScript("arguments[0].click();", element);
+                    Thread.sleep(1000);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            logger.info("end");
+        }
+
     }
     public void freelancermap() {
         final String FREELANCERCAMP_URL = "https://www.freelancermap.de/feeds/projekte/de-deutschland.xml";
